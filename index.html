@@ -1,22 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<title></title>
-	<link rel="stylesheet" href="/static/css/style.css">
-	<script defer src="/static/js/script.js"></script>
-</head>
-<body>
-	<div class="super">
-		<div class="nav flex">
-			<div class="logo">
-				<h1>__micro_blog__</h1>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<title></title>
+		<link rel="stylesheet" href="/static/css/style.css">
+		<script defer src="/static/js/script.js"></script>
+	</head>
+	<body>
+		<div class="super">
+			<div class="nav flex">
+				<div class="logo">
+					<h1>__micro_blog__</h1>
+				</div>
+				<div class="searchBox">
+					<div class="searchBar">
+					</div>
+					<div id="searchIcon" onclick="toggleSearch(this)" class="flex searchIcon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+						</svg>
+
+					</div>
+				</div>
+			</div>
+			<div class="flex main" id="main">
+			
+				<div class="blog search hidden" id="search">
+					<div class="brdr brdrtp"></div>
+					<div class="brdr brdrbtm"></div>
+					<div class="heading">
+						<h2># SEARCH</h2>
+					</div>
+					<div class="flex body">
+				<form claa="inpForm" action="">
+		<input id="inp" class="inp" type="text" placeholder="search by tags">
+					</form>	<div class="flex checkboxes">
+					<div class="flex checkbox">
+							<input onchange="toggleElem('authorInp')" type="checkbox" name="" id="authorCheck" class="authorCheck">
+		<label for="authorCheck">search author</label>
+						</div>	
+
+				<div class="flex checkbox">
+						<input onchange="toggleElem('dateInp')" type="checkbox" class="dateCheck" name="" id="dateCheck">
+		<label for="dateCheck">search date</label>
+					</div>	</div>
+						<div>
+							<input id="authorInp" class="authorInp hidden" type="text" name="" placeholder="search by author">
+							<input type="month" name="" id="dateInp" class="dateInp hidden" value="2022-10">
+							<div class="footer">
+								<div class="flex tags" id="tags">
+									tags: 
+								</div>
+								<div class="flex author">
+									<p id="publishData">
+									Published in <span class="date" id="date">10/2022</span> by <span class="name" id="authorName">@anurag</span>
+									</p>
+								</div>
+							</div>
+						</div>	<button>Search</button>
+					</div>
+
+				</div>
 			</div>
 		</div>
-		<div class="flex main" id="main">
-			
-		</div>
-	</div>
-</body>
+	</body>
 </html>
