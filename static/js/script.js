@@ -1,12 +1,18 @@
-const main = document.getElementById("main")
+const main = document.getElementById("blogs")
 const searchData={
 	dateInp:false,
 	authorInp:false,
 	date:'10/2022',
 	author:'anurag',
+	exact:false,
 	tags:{}
 }
+let next=null
+let prev = null
 let searchActive=false
+const blogs = []
+let ttlBlogs = 0;
+let len = 0
 const closeIcon = `
 
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
@@ -20,46 +26,40 @@ const searchIcon = `
 						</svg>
 `
 
-const blog = () => {
+const blog = ({title, body, author, tags , time, date}) => {
 	return `
 <div class="blog">
 				<div class="brdr brdrtp"></div>
 				<div class="brdr brdrbtm"></div>
 				<div class="heading">
-					<h2># hello</h2>
+					<h2># ${title}</h2>
 				</div>
 				<div class="body">
 					<p>
-					Lorem voluptatibus incidunt deleniti soluta ipsa, possimus Autem vitae maiores ab consequuntur at In aliquid animi ipsa rerum est Voluptatibus ipsa ea culpa blanditiis dolorem Necessitatibus eligendi ea nemo in
+					${body}
 					</p>
 				</div>
 				<div class="footer">
 					<div class="flex author">
 						<p>
-						Published on <span class="date">02/10/2022</span> at <span class="time">17:33 pm</span> by <span class="name">@anurag</span>
+						Published on <span class="date">${date.substring(0,10).replaceAll('-', '/')}</span> at <span class="time">${time}</span> by <span class="name">@${author}</span>
 						</p>
 					</div>
 					<div class="flex tags">
 						tags: 
-						<span>#hello</span>
-						<span>#anurag</span>
-						<span>#shukla</span>
-						<span>#world</span>
-						<span>#latest</span>
+						${tags.map(tag=>{
+						return `<span>#${tag}</span>`
+						}).join('')}
 					</div>
 				</div>
 			</div>
 	`
 }
-const addBlogs = n =>{
-	for(let i=0;i<n;i++)
-		main.innerHTML+=blog()
-}
 const getBlock = id => {
 	return document.getElementById(id)
 }
-const toggleElem = id =>{
-	getBlock(id).classList.toggle('hidden')
+const toggleElem = (id, elem=false) =>{
+	!elem ? getBlock(id).classList.toggle('hidden'):null
 	searchData[id]=!searchData[id]
 	updatePublished()
 }
@@ -86,9 +86,91 @@ const updatePublished = () => {
 		getBlock("tags").classList.remove('hidden')
 	}
 }
+//const data=(i) => {
+//return ({	title:"sample data "+i,
+	//body:"Elit distinctio doloremque cum vitae nihil Sed pariatur in eveniet quidem vero dolore Dolores voluptatum commodi rerum in esse. Incidunt vitae cupiditate quas expedita molestiae id aspernatur suscipit Facere nisi eveniet et vitae optio? Deserunt laudantium vitae ad sint laboriosam!",
+	//author:"anurag",
+	//tags:["coding", "hello"]
+//})
+//}
+
+//const addNew = async (i) => {
+	//await fetch('/add-new-post', {
+		//method: 'POST',
+		//headers: {
+			//'Accept': 'application/json, text/plain, */*',
+			//'Content-Type': 'application/json'
+		//},
+
+		//crossdomain: true,
+		//withCredentials:'include',
+		//body:JSON.stringify(data(i))
+	//})
+		//.then(response => response.json())
+		//.then(res=>console.log(res))	
+//}
+
+const search = async () => {
+	const data = JSON.parse(JSON.stringify(searchData))
+	data.tags=Object.keys(data.tags)
+	await fetch('/search', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json, text/plain, */*',
+			'Content-Type': 'application/json'
+		},
+		crossdomain: true,
+		withCredentials:'include',
+		body:JSON.stringify({searchData:data })
+	})
+		.then(response => response.json())
+		.then(res=>{
+			setPosts(res)
+		})	
+}
+const getBlogs = async (fwd=true) => {
+	if(len>=ttlBlogs && ttlBlogs!=0){
+	getBlock('nextButton').classList.add('hidden')
+	return	
+	}
+	getBlock('loadMore').classList.toggle('hidden')
+	getBlock('spinner').classList.toggle('hidden')
+	await fetch('/blogs', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json, text/plain, */*',
+			'Content-Type': 'application/json'
+		},
+		crossdomain: true,
+		withCredentials:'include',
+		body:JSON.stringify({next:(fwd?next:prev), fwd})
+	})
+		.then(response => response.json())
+		.then(res=>{
+			if(res.status){
+				next=res.next
+				getBlock('ttl').innerText=res.ttl
+				ttlBlogs=res.ttl
+				setPosts(res.items)
+			}})	
+	getBlock('loadMore').classList.toggle('hidden')
+	getBlock('spinner').classList.toggle('hidden')
+	
+}
+
+const setPosts=(items)=>{
+	items.map(item=>{
+		main.innerHTML+=blog(item)
+		blogs.push(item)
+		len++
+	})
+	getBlock('len').innerText=len
+}
 
 onload=()=>{
-	addBlogs(10)
+//	addBlogs(10)
+//	for(let i = 0;i<100;i++)addNew(i+1)
+	getBlogs(true)
 	getBlock("inp").addEventListener('keydown', (e)=>{
 		if(e.keyCode == 13) {
 			e.preventDefault()
@@ -121,8 +203,8 @@ onload=()=>{
 			searchData.date=tag
 			updatePublished()
 			getBlock('date').innerText=`${tag}`
-				}
+		}
 	})
 
-updatePublished()
+	updatePublished()
 }
