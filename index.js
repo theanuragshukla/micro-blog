@@ -62,6 +62,7 @@ app.post('/add-new-post',async (req, res)=>{
 				throw err
 			})
 	}
+			let obj = {}
 	catch(err){ console.error(err); }
 	finally{ client.close(); } 
 })
