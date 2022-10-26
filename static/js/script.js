@@ -10,7 +10,7 @@ const searchData={
 let next=null
 let prev = null
 let searchActive=false
-const blogs = []
+let blogs = []
 let ttlBlogs = 0;
 let len = 0
 const searchRet = {
@@ -19,6 +19,12 @@ const searchRet = {
 	len:0,
 	next:null
 }
+
+let cached = {
+	len:0,
+	blogs:[]
+}
+
 const closeIcon = `
 
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
@@ -79,10 +85,12 @@ const blog = ({title, body, author, tags , time, date}) => {
 		searchActive=!searchActive
 		e.innerHTML=searchActive ? closeIcon : searchIcon
 		main.innerHTML=''
+		getBlock("countTab").classList.toggle("hidden")
 		if(searchActive){
 			searchRet.next=null
 		}else{
 			next=null
+			blogs=[]
 			getBlogs(true)
 		}
 	}
@@ -125,7 +133,7 @@ const blog = ({title, body, author, tags , time, date}) => {
 
 	const search = async (e) => {
 		len=0
-		getBlock('len')=0
+		getBlock('len').innerText=0
 		if(searchRet.len>=searchRet.ttl && searchRet.ttl!=0){
 			getBlock('nextButton').classList.add('hidden')
 			return	
@@ -166,6 +174,13 @@ const blog = ({title, body, author, tags , time, date}) => {
 			getBlock('nextButton').classList.add('hidden')
 			return	
 		}
+		const cache = await sessionStorage.getItem('cache') 
+		cached = (cache === null) ? cached : JSON.parse(cache)
+		if(cached!==null && cached.len!=0 && next!==cached.blogs[cached.len - 1]._id && cached.blogs.length!==0){
+			setPosts()
+			return
+		}  
+		console.log(cached)
 		getBlock('loadMore').classList.toggle('hidden')
 		getBlock('spinner').classList.toggle('hidden')
 		await fetch('/blogs', {
@@ -194,7 +209,7 @@ const blog = ({title, body, author, tags , time, date}) => {
 
 	}
 
-	const setPosts=(items, search=false)=>{
+	const setPosts=(items=[], search=false)=>{
 		if(search){
 			items.map(item=>{
 				main.innerHTML+=blog(item)
@@ -205,16 +220,36 @@ const blog = ({title, body, author, tags , time, date}) => {
 			return
 
 		}
+		if(items.length==0){
+			let start = 0;
+			if(blogs.length!=0){
+				start = blogs.length
+			}
+			for(let i = start ; i<start+20; i++){
+				main.innerHTML+=blog(cached.blogs[i])
+				blogs.push(cached.blogs[i])
+				next = cached.blogs[i]._id
+				console.log(next)
+			}
+			getBlock('len').innerText=blogs.length
+		}
+		const tempobj = {
+			len:cached.blogs.length+items.length,
+			blogs:[...cached.blogs, ...items]
+		}
+		sessionStorage.setItem('cache', JSON.stringify(tempobj))
 		items.map(item=>{
 			main.innerHTML+=blog(item)
 			blogs.push(item)
 			len++
 		})
-		getBlock('len').innerText=len
+			getBlock('len').innerText=blogs.length
 	}
 
-	onload=()=>{
+	onload=async ()=>{
 		//	for(let i = 0;i<30;i++)addNew(i+1)
+		const cache = await sessionStorage.getItem('cache') 
+		cached = (cache === null) ? cached : JSON.parse(cache)
 		getBlogs(true)
 		getBlock("inp").addEventListener('keydown', (e)=>{
 			if(e.keyCode == 13) {

@@ -26,9 +26,9 @@ app.post('/search',async (req, res)=>{
 	}
 	res.json({status:false, ...data })
 })
-
 app.post('/blogs', async (req, res)=>{
 	const {next, fwd}=req.body
+	console.log(next)
 	const {items, next:cursor, ttl, len} = await getPosts({next, fwd})
 	console.log(items)
 	if(len!=0){
@@ -62,7 +62,7 @@ app.post('/add-new-post',async (req, res)=>{
 				throw err
 			})
 	}
-			let obj = {}
+			//let obj = {}
 	catch(err){ console.error(err); }
 	finally{ client.close(); } 
 })
@@ -105,10 +105,9 @@ async function getPosts({next=null, fwd=true, search=false, item={}}){
 			query["$and"].push(obj)
 		}
 	}
-	query=escapeForMongo(query)
-
+	//query=escapeForMongo(query)
 	try{
-		//	console.log(JSON.stringify(query, null, 4))
+		console.log(JSON.stringify(query, null, 4))
 		client =await MongoClient.connect(url, {useNewUrlParser: true})
 		db = client.db("mydb")
 		let dCollection = db.collection('blogs')
