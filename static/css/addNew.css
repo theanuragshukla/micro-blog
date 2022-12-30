@@ -1,0 +1,17 @@
+.blog-body {
+  resize: vertical;
+  max-height: 300px;
+  width: 100%;
+  background: #010101;
+  border: 2px solid var(--green-bold);
+  border-radius: 5px;
+  padding: 10px;
+  outline: none;
+}
+.blog-body:focus,
+.blog-body:hover {
+  border-width: 4px;
+}
+.addNew {
+  max-width: 600px;
+}

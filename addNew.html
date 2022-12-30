@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+
+		<link rel="stylesheet" href="/static/css/style.css" />
+		<script defer src="/static/js/addNew.js"></script>
+		<link rel="stylesheet" href="/static/css/addNew.css" />
+	</head>
+	<body>
+		<div class="super">
+			<div class="flex main">
+				<div class="blog search addNew" id="search">
+					<div class="brdr brdrtp"></div>
+					<div class="brdr brdrbtm"></div>
+					<div class="heading">
+						<h2># ADD</h2>
+					</div>
+					<div class="flex body">
+						<form class="inpForm" action="">
+							<input
+							id="blog-title"
+							class="blog-title"
+							type="text"
+							placeholder="title"
+							/>
+						</form>
+						<form class="inpForm" action="">
+							<textarea
+								id="blog-body"
+								class="blog-body"
+								type="text"
+								placeholder="express yourself"
+								></textarea>
+						</form>
+
+						<form class="inpForm" action="">
+							<input
+							id="inp"
+							class="inp"
+							type="text"
+							placeholder="enter the tags"
+							/>
+						</form>
+						<form class="inpForm" action="">
+							<input
+							id="secret"
+							class="secret"
+							type="password"
+							placeholder="Secret key"
+							/>
+						</form>
+
+						<div>
+							<div class="footer">
+								<div class="flex tags" id="tags">tags:</div>
+								<div class="flex author">
+									<p id="publishData">
+									Published by
+									<span class="name" id="authorName">@anurag</span>
+									</p>
+								</div>
+							</div>
+						</div>
+						<button onclick="makePost(this)">POST</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
